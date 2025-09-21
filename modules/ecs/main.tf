@@ -1,7 +1,6 @@
 # ECS Cluster
 resource "aws_ecs_cluster" "this" {
   name = "${var.project}-${var.environment}-cluster"
-  capacity_providers = ["FARGATE"]
   tags = {
     Name        = "${var.project}-${var.environment}-cluster"
     Environment = var.environment
