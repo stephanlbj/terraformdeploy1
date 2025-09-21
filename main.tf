@@ -37,3 +37,18 @@ module "ecr" {
   tags        = var.tags
 }
  
+ module "ecs" {
+  source               = "./modules/ecs"
+  project              = var.project
+  environment          = var.environment
+  vpc_id               = module.vpc.vpc_id
+  private_subnets      = module.vpc.private_subnets
+  ecs_sg_id            = module.vpc.ecs_sg_id
+  alb_target_group_arn = module.alb.target_group_arn
+  container_name       = "nest-api"
+  container_image      = "${module.ecr.repository_url}:latest"
+  container_port       = 3000
+  cpu                  = 256
+  memory               = 512
+  desired_count        = 2
+}
