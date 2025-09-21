@@ -30,4 +30,10 @@ module "alb" {
 }
  
 
+module "ecr" {
+  source      = "./modules/ecr"
+  project     = var.project
+  environment = var.environment
+  tags        = var.tags
+}
  
