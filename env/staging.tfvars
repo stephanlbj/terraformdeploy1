@@ -21,7 +21,7 @@ sg_ingress_public = [
 ]
 
 sg_ingress_private = [
-  { from_port = 3000, to_port = 3000, protocol = "tcp", source_security_group_id = module.vpc.alb_sg_id }
+  { from_port = 3000, to_port = 3000, protocol = "tcp", source_security_group_id = "alb_sg_placeholder" }
 ]
 
 sg_egress = [
