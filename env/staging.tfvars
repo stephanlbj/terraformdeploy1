@@ -27,3 +27,7 @@ sg_ingress_private = [
 sg_egress = [
   { from_port = 0, to_port = 0, protocol = "-1", cidr_blocks = ["0.0.0.0/0"] }
 ]
+
+
+# ALB / ECS
+target_group_port = 3000

@@ -69,3 +69,10 @@ variable "sg_egress" {
     cidr_blocks = list(string)
   }))
 }
+
+variable "target_group_port" {
+  description = "Port on which the ALB target group receives traffic"
+  type        = number
+  default     = 3000
+}
+
