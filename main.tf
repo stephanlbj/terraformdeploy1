@@ -52,3 +52,4 @@ module "ecr" {
   memory               = 512
   desired_count        = 2
 }
+
