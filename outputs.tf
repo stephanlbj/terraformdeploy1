@@ -48,3 +48,22 @@ output "private_route_table_id" {
   description = "Private Route Table ID"
   value       = module.vpc.private_route_table_id
 }
+
+
+# ECR
+output "repository_url" {
+  value = module.ecr.repository_url
+}
+
+# ECS
+output "ecs_cluster_id" {
+  value = module.ecs.ecs_cluster_id
+}
+
+output "ecs_service_name" {
+  value = module.ecs.ecs_service_name
+}
+
+output "ecs_task_image" {
+  value = module.ecs.ecs_task_image
+}
