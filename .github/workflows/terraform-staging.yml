@@ -38,7 +38,11 @@ jobs:
         run: terraform init -backend-config="env/backend.${{ github.event.inputs.environment }}.tfvars"
 
       - name: Terraform Import ECS Role
-        run: terraform import module.ecs.aws_iam_role.ecs_task_execution nest-api-${{ github.event.inputs.environment }}-ecs-task-exec-role
+        run: |
+          terraform import \
+            -var-file="env/${{ github.event.inputs.environment }}.tfvars" \
+            module.ecs.aws_iam_role.ecs_task_execution \
+            nest-api-${{ github.event.inputs.environment }}-ecs-task-exec-role
 
   apply:
     name: Terraform Plan & Apply
