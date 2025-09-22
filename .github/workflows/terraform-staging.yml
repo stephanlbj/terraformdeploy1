@@ -1,11 +1,10 @@
 name: Terraform Apply
 
 on:
-  push:
-    branches:
-      - main
-      - staging
-      - preprod
+  workflow_run:
+    workflows: ["Terraform Import"]
+    types:
+      - completed
   workflow_dispatch:
     inputs:
       environment:
@@ -45,7 +44,6 @@ jobs:
             echo "environment=preprod" >> $GITHUB_ENV
           else
             echo "environment=main" >> $GITHUB_ENV
-          fi
 
       - name: Terraform Init
         run: terraform init -backend-config="env/backend.${{ env.environment }}.tfvars"
