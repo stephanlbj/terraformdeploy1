@@ -55,9 +55,11 @@ module "ecr" {
 
 module "iam_app_staging" {
   source      = "./modules/iam"
-  repo_name   = var.github_repo_name
-  branch      = var.github_branch
+  github_repo_name   = var.github_repo_name
+  github_branch      = var.github_branch
   environment = var.environment
+  aws_region       = var.aws_region
+  aws_account_id   = var.aws_account_id
 
   ssm_param_arn = "arn:aws:ssm:${var.aws_region}:${var.aws_account_id}:parameter/infra/${var.environment}/ecr_repo_url"
 }
