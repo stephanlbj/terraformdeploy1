@@ -76,3 +76,18 @@ variable "target_group_port" {
   default     = 3000
 }
 
+variable "github_repo_name" {
+  description = "Nom du repository GitHub pour OIDC"
+  type        = string
+}
+
+variable "github_branch" {
+  description = "Nom de la branche GitHub pour OIDC"
+  type        = string
+}
+
+variable "aws_account_id" {
+  description = "AWS Account ID"
+  type        = string
+}
+
