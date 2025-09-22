@@ -1,11 +1,11 @@
 name: Terraform Apply
 
 on:
-  push:
-    branches:
-      - main
-      - staging
-      - preprod
+  # push:
+  #   branches:
+  #     - main
+  #     - staging
+  #     - preprod
   workflow_run:
     workflows: ["Terraform Import"]
     types:
