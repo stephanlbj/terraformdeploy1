@@ -15,7 +15,7 @@ on:
 
 jobs:
   import:
-    name: Terraform Import ECS Role
+    name: Terraform Import ECS Role and OIDC Provider
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch' # ne s'exécute que si déclenché manuellement
     steps:
@@ -37,12 +37,27 @@ jobs:
       - name: Terraform Init
         run: terraform init -backend-config="env/backend.${{ github.event.inputs.environment }}.tfvars"
 
-      - name: Terraform Import ECS Role
+      - name: Import ECS Role if not present
         run: |
-          terraform import \
-            -var-file="env/${{ github.event.inputs.environment }}.tfvars" \
-            module.ecs.aws_iam_role.ecs_task_execution \
-            nest-api-${{ github.event.inputs.environment }}-ecs-task-exec-role
+          if ! terraform state list | grep -q 'module.ecs.aws_iam_role.ecs_task_execution'; then
+            terraform import \
+              -var-file="env/${{ github.event.inputs.environment }}.tfvars" \
+              module.ecs.aws_iam_role.ecs_task_execution \
+              nest-api-${{ github.event.inputs.environment }}-ecs-task-exec-role
+          else
+            echo "ECS Role already imported in state, skipping import."
+          fi
+
+      - name: Import OIDC Provider if not present
+        run: |
+          if ! terraform state list | grep -q 'module.iam_app_staging.aws_iam_openid_connect_provider.github'; then
+            terraform import \
+              -var-file="env/${{ github.event.inputs.environment }}.tfvars" \
+              module.iam_app_staging.aws_iam_openid_connect_provider.github \
+              arn:aws:iam::585665041354:oidc-provider/token.actions.githubusercontent.com
+          else
+            echo "OIDC Provider already imported in state, skipping import."
+          fi
 
   apply:
     name: Terraform Plan & Apply
