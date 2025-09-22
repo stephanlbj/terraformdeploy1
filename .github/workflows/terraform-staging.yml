@@ -1,15 +1,11 @@
-name: Terraform Apply
+name: Terraform Import and Apply
 
 on:
-  # push:
-  #   branches:
-  #     - main
-  #     - staging
-  #     - preprod
-  workflow_run:
-    workflows: ["Terraform Import"]
-    types:
-      - completed
+  push:
+    branches:
+      - main
+      - staging
+      - preprod
   workflow_dispatch:
     inputs:
       environment:
@@ -18,9 +14,36 @@ on:
         default: "staging"
 
 jobs:
-  terraform:
+  import:
+    name: Terraform Import ECS Role
     runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' # ne s'exécute que si déclenché manuellement
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.7
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Terraform Init
+        run: terraform init -backend-config="env/backend.${{ github.event.inputs.environment }}.tfvars"
+
+      - name: Terraform Import ECS Role
+        run: terraform import module.ecs.aws_iam_role.ecs_task_execution nest-api-${{ github.event.inputs.environment }}-ecs-task-exec-role
+
+  apply:
+    name: Terraform Plan & Apply
+    runs-on: ubuntu-latest
+    needs: import # attend la fin du job "import" si déclenché manuellement
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -43,13 +66,8 @@ jobs:
       - name: Determine environment
         id: env
         run: |
-          if [[ "${GITHUB_REF_NAME}" == "staging" ]]; then
-            echo "environment=staging" >> $GITHUB_ENV
-          elif [[ "${GITHUB_REF_NAME}" == "preprod" ]]; then
-            echo "environment=preprod" >> $GITHUB_ENV
-          else
-            echo "environment=main" >> $GITHUB_ENV
-          fi
+          ENV="${{ github.event.inputs.environment }}"
+          echo "environment=$ENV" >> $GITHUB_ENV
 
       - name: Terraform Init
         run: terraform init -backend-config="env/backend.${{ env.environment }}.tfvars"
