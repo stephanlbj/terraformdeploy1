@@ -53,3 +53,11 @@ module "ecr" {
   desired_count        = 2
 }
 
+module "iam_app_staging" {
+  source      = "./modules/iam"
+  repo_name   = var.github_repo_name
+  branch      = var.github_branch
+  environment = var.environment
+
+  ssm_param_arn = "arn:aws:ssm:${var.aws_region}:${var.aws_account_id}:parameter/infra/${var.environment}/ecr_repo_url"
+}
