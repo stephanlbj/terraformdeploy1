@@ -2,6 +2,11 @@ aws_region      = "eu-north-1"
 project         = "nest-api"
 environment     = "staging"
 
+# IAM (GitHub OIDC access)
+github_repo_name = "stephanlbj/nest_api"
+github_branch    = "staging"
+aws_account_id  = "585665041354"
+
 # Réseau
 vpc_cidr        = "10.0.0.0/16"
 public_subnets  = ["10.0.1.0/24", "10.0.2.0/24"]
