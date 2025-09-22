@@ -15,7 +15,7 @@ on:
 
 jobs:
   import:
-    name: Terraform Import ECS Role
+    name: Terraform Import ECS Role and OIDC Provider
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch' # ne s'exécute que si déclenché manuellement
     steps:
@@ -42,7 +42,14 @@ jobs:
           terraform import \
             -var-file="env/${{ github.event.inputs.environment }}.tfvars" \
             module.ecs.aws_iam_role.ecs_task_execution \
-            nest-api-${{ github.event.inputs.environment }}-ecs-task-exec-role
+            nest-api-${{ github.event.inputs.environment }}-ecs-task-exec-role || true
+
+      - name: Terraform Import OIDC Provider
+        run: |
+          terraform import \
+            -var-file="env/${{ github.event.inputs.environment }}.tfvars" \
+            module.iam_app_staging.aws_iam_openid_connect_provider.github \
+            arn:aws:iam::585665041354:oidc-provider/token.actions.githubusercontent.com || true
 
   apply:
     name: Terraform Plan & Apply
