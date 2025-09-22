@@ -13,4 +13,4 @@ output "task_definition_arn" {
 output "ecs_task_image" {
   description = "Full container image used in ECS task definition"
   value       = length(aws_ecs_task_definition.this.container_definitions) > 0 ? jsondecode(aws_ecs_task_definition.this.container_definitions)[0].image : ""
-}
+
